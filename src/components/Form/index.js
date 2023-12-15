@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pressable, Keyboard, Text, TextInput, View, TouchableOpacity, Vibration } from "react-native";
+import {Platform, Pressable, Keyboard, KeyboardAvoidingView, Text, TextInput, View, TouchableOpacity, Vibration } from "react-native";
 import ResultImc from "./ResultImc";
 import styles from "./style";
 
@@ -45,40 +45,54 @@ export default function Form() {
   }
 
   return (
-    <Pressable onPress={Keyboard.dismiss} style={styles.formContext}>
-      <View style={styles.form}>
-
-        <Text style={styles.formLabel}>Altura em cm:</Text>
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
-        <TextInput 
-        style={styles.input}
-          onChangeText={(text) => setHeight(parseFloat(text))}
-          value={height ? height.toString() : ""}
-          placeholder="Ex: 170"
-          keyboardType="numeric"
-          returnKeyType="done"
-        />
-
-        <Text style={styles.formLabel}>Peso arrendodado: </Text>
-        <Text style={styles.errorMessage}>{errorMessage}</Text>
-        <TextInput 
-        style={styles.input}
-          onChangeText={(text) => setWeight(parseFloat(text))}
-          value={weight ? weight.toString() : ""}
-          placeholder="Ex: 75"
-          keyboardType="numeric"
-          returnKeyType="done"
-        />
-        
-        <TouchableOpacity style={styles.buttonCalculator} onPress={() => validationImc()}>
-          <Text style={styles.textButtonCalculator}>{textButton}</Text>
-        </TouchableOpacity>
-
-
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.formContext}
+    >
+      <View style={styles.formContext}>
+        {imc === null ? (
+          <Pressable onPress={Keyboard.dismiss} style={styles.form}>
+            <Text style={styles.formLabel}>Altura em cm:</Text>
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(text) => setHeight(parseFloat(text))}
+              value={height ? height.toString() : ""}
+              placeholder="Ex: 170"
+              keyboardType="numeric"
+              returnKeyType="done"
+            />
+  
+            <Text style={styles.formLabel}>Peso arredondado: </Text>
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(text) => setWeight(parseFloat(text))}
+              value={weight ? weight.toString() : ""}
+              placeholder="Ex: 75"
+              keyboardType="numeric"
+              returnKeyType="done"
+            />
+            <TouchableOpacity
+              style={styles.buttonCalculator}
+              onPress={() => validationImc()}
+            >
+              <Text style={styles.textButtonCalculator}>{textButton}</Text>
+            </TouchableOpacity>
+          </Pressable>
+        ) : (
+          <View style={styles.exhibitionResultImc}>
+            <ResultImc messageResultImc={messageImc} ResultImc={imc} />
+            <TouchableOpacity
+              style={styles.buttonCalculator}
+              onPress={() => validationImc()}
+            >
+              <Text style={styles.textButtonCalculator}>{textButton}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
-
-      <ResultImc messageResultImc={messageImc} ResultImc={imc} />
-    </Pressable>
-  );
+    </KeyboardAvoidingView>
+  );  
 }
 
