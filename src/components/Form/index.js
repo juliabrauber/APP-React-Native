@@ -1,42 +1,44 @@
 import React, { useState } from "react";
-import {Platform, Pressable, Keyboard, KeyboardAvoidingView, Text, TextInput, View, TouchableOpacity, Vibration } from "react-native";
+import {FlatList, Pressable, Keyboard, Text, TextInput, View, TouchableOpacity, Vibration } from "react-native";
 import ResultImc from "./ResultImc";
 import styles from "./style";
 
-export default function Form() {
+export default function Form(prosp) {
   const [height, setHeight] = useState(null);
   const [weight, setWeight] = useState(null);
   const [messageImc, setMessageImc] = useState("Preencha o peso e altura");
   const [imc, setImc] = useState(null);
   const [textButton, setTextButton] = useState("Calcular");
   const [errorMessage, setErrorMessage] = useState(null);
+  const [imcList, setImcList] = useState([]);
 
   function imcCalculator() {
     if (height && weight) {
       const heightInMeters = height / 100; // Convertendo altura para metros
-      return setImc((weight / (heightInMeters * heightInMeters)).toFixed(2));
+      const totalImc = (weight / (heightInMeters * heightInMeters)).toFixed(2);
+      setImcList((arr) => [...arr, { id: new Date().getTime(), imc: totalImc }]);
+      setImc(totalImc);
     } else {
-      return setImc(null);
+      setImc(null);
     }
   }
 
-   function verificationImc(){
-    if(imc == null){
+  function verificationImc() {
+    if (imc == null) {
       Vibration.vibrate();
       setErrorMessage("campo obrigatório");
     }
-   }
+  }
 
   function validationImc() {
-    if (weight != null && height != null ){
+    if (weight != null && height != null) {
       imcCalculator();
       setWeight(null);
       setHeight(null);
       setMessageImc("Seu Imc é igual:");
       setTextButton("Calcular novamente");
       setErrorMessage(null);
-    } 
-    else {
+    } else {
       verificationImc();
       setImc(null);
       setTextButton("Calcular");
@@ -45,10 +47,6 @@ export default function Form() {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.formContext}
-    >
       <View style={styles.formContext}>
         {imc === null ? (
           <Pressable onPress={Keyboard.dismiss} style={styles.form}>
@@ -62,7 +60,6 @@ export default function Form() {
               keyboardType="numeric"
               returnKeyType="done"
             />
-  
             <Text style={styles.formLabel}>Peso arredondado: </Text>
             <Text style={styles.errorMessage}>{errorMessage}</Text>
             <TextInput
@@ -91,8 +88,15 @@ export default function Form() {
             </TouchableOpacity>
           </View>
         )}
+        <FlatList
+        style={styles.listImcs}
+        data={imcList.reverse()}
+        renderItem={({ item }) => (
+          <Text style={styles.resultImcItem}>
+            Resultado Imc = {item.imc}
+          </Text>
+        )}
+        keyExtractor={(item) => item.id.toString()}/>
       </View>
-    </KeyboardAvoidingView>
-  );  
+  );
 }
-

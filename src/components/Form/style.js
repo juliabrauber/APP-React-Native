@@ -56,6 +56,20 @@ const styles = StyleSheet.create({
     exhibitionResultImc:{
         width:"100%",
         flex:1,
-    }
+    },
+    listImcs:{
+        marginTop:20,
+    },
+    resultImcItem:{
+        fontSize:22,
+        color:"red",
+        height:50,
+        width:"100%",
+        paddingRight:20,
+    },
+    textResultItemList:{
+        color:"red",
+        fontSize:16,
+    },
 });
  export default styles
